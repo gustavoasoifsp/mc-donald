@@ -37,7 +37,7 @@ Um simple sistema de lanchonete inspirado na grande franquia de fast-food Wendy'
 
 ## Como Rodar o Projeto
 1. Clone o repositório:
-`git clone <URL_DO_REPOSITORIO>`
+`git clone https://github.com/gustavoasoifsp/mc-donald.git`
 2. Instale as dependências:
 `npm install`
 3. Crie as tabelas do banco de dados:
