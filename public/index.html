@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BurgerPoint - Pedidos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--red:#DA291C;--red2:#B01E13;--yel:#FFC72C;--ink:#2B2118;--paper:#FFF6DA;--card:#fff;--line:#EBDDB5;--mut:#6F6250;--ok:#1E7B3A}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 Nunito,"Segoe UI",system-ui,sans-serif}
+h1,h2,h3{font-family:Fredoka,"Trebuchet MS",sans-serif;margin:0;line-height:1.15}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.top{position:sticky;top:0;z-index:20;background:var(--red);color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding:12px 20px}
+.brand{font:700 28px Fredoka,"Trebuchet MS",sans-serif;color:var(--yel);letter-spacing:.3px}
+nav{display:flex;gap:6px;flex:1}
+nav button{border:0;background:none;color:#fff;font-weight:800;padding:8px 16px;border-radius:99px;cursor:pointer}
+nav button[aria-selected=true]{background:var(--yel);color:var(--ink)}
+.pill{font-size:13px;font-weight:700;background:rgba(0,0,0,.22);padding:4px 12px;border-radius:99px}
+.pill::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:#aaa;margin-right:7px}
+.pill.on::before{background:#5CE07F}.pill.off::before{background:var(--yel)}
+main{max-width:1180px;margin:0 auto;padding:22px 20px 90px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:start}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.chip{border:2px solid var(--ink);background:var(--card);border-radius:99px;padding:6px 16px;font-weight:800;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--yel)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.item{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.art{width:84px;height:84px;border-radius:50%;background:var(--yel);display:grid;place-items:center;font-size:44px}
+.item h3{font-size:19px}.item p{margin:0;color:var(--mut);font-size:14px;flex:1}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.price{font:700 20px Fredoka,sans-serif}
+.btn{border:2px solid var(--ink);background:var(--yel);color:var(--ink);border-radius:99px;padding:7px 16px;font-weight:800;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn.red{background:var(--red);color:#fff}.btn.ghost{background:var(--card)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.sm{padding:3px 12px;box-shadow:none;font-size:14px}
+.step{display:inline-flex;align-items:center;border:2px solid var(--ink);border-radius:99px;background:var(--card)}
+.step button{border:0;background:none;width:32px;height:32px;font-size:20px;font-weight:800;cursor:pointer}
+.step b{min-width:24px;text-align:center}
+.cart{background:var(--card);border:2px solid var(--ink);border-radius:22px;padding:18px;position:sticky;top:84px;max-height:calc(100vh - 100px);overflow:auto;box-shadow:6px 6px 0 var(--yel)}
+.cart h2{font-size:24px}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.xbtn{display:none;border:0;background:none;font-size:22px;cursor:pointer}
+label{font-weight:800;font-size:14px;display:block;margin-bottom:4px}
+input,select,textarea{width:100%;border:2px solid var(--line);background:#fff;color:#2B2118;border-radius:12px;padding:8px 12px}
+textarea{resize:vertical;min-height:90px}
+.row{display:flex;gap:8px;align-items:center}
+.line{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.line small{display:block;color:var(--mut)}
+.total{display:flex;justify-content:space-between;font:700 24px Fredoka,sans-serif;margin:14px 0}
+.empty{color:var(--mut);padding:22px 4px;text-align:center}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
+.bar h2{font-size:28px}.bar input{width:260px}
+.wrap{overflow-x:auto;background:var(--card);border:2px solid var(--line);border-radius:18px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:14px;background:#FFEFB8;color:var(--ink)}
+tr:last-child td{border-bottom:0}
+td.act{white-space:nowrap;display:flex;gap:6px}
+.num{font-weight:800;white-space:nowrap}
+dialog{border:2px solid var(--ink);border-radius:22px;padding:0;width:min(460px,92vw);background:var(--card);color:var(--ink)}
+dialog::backdrop{background:rgba(43,33,24,.55)}
+dialog form{padding:22px;display:grid;gap:14px}
+.err{color:var(--red2);font-weight:700;font-size:14px;margin:0}
+.acts{display:flex;justify-content:flex-end;gap:10px}
+.toasts{position:fixed;right:16px;bottom:16px;z-index:60;display:grid;gap:8px}
+.toast{background:var(--ink);color:#fff;padding:12px 16px;border-radius:14px;max-width:340px;font-weight:700}
+.toast.erro{background:var(--red2)}
+.cartbar,.scrim{display:none}
+@media(max-width:900px){
+.layout{grid-template-columns:1fr}
+.cart{position:fixed;left:0;right:0;bottom:0;top:auto;max-height:88vh;border-radius:22px 22px 0 0;z-index:40;transform:translateY(105%);visibility:hidden;transition:transform .25s,visibility 0s .25s}
+.cart.open{transform:none;visibility:visible;transition:transform .25s}
+.xbtn{display:block}
+.scrim.show{display:block;position:fixed;inset:0;background:rgba(43,33,24,.5);z-index:35}
+.cartbar{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:30;justify-content:space-between;font-size:18px;padding:12px 20px}
+.bar input{width:100%}
+}
+@media(prefers-reduced-motion:reduce){.cart,.cart.open{transition:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">BurgerPoint</div>
+  <nav role="tablist" aria-label="Seções">
+    <button role="tab" data-action="view" data-view="menu" aria-selected="true">Cardápio</button>
+    <button role="tab" data-action="view" data-view="orders" aria-selected="false">Pedidos</button>
+    <button role="tab" data-action="view" data-view="clients" aria-selected="false">Clientes</button>
+  </nav>
+  <span class="pill" id="pill">Verificando API</span>
+</header>
+
+<main>
+  <section id="v-menu" class="layout">
+    <div><div class="chips" id="chips"></div><div class="grid" id="grid"></div></div>
+    <aside class="cart" id="cart" aria-label="Seu pedido"></aside>
+  </section>
+
+  <section id="v-orders" hidden>
+    <div class="bar"><div><h2>Pedidos</h2><div id="osum" style="color:var(--mut)"></div></div>
+      <input id="osearch" type="search" placeholder="Buscar por nº, cliente ou item" aria-label="Buscar pedidos"></div>
+    <div id="olist"></div>
+  </section>
+
+  <section id="v-clients" hidden>
+    <div class="bar"><h2>Clientes</h2><button class="btn" data-action="new-client">Novo cliente</button></div>
+    <div id="clist"></div>
+  </section>
+</main>
+
+<div class="scrim" id="scrim" data-action="close-cart"></div>
+<button class="btn red cartbar" id="cartbar" data-action="open-cart" hidden></button>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<dialog id="dCli"><form id="fCli" novalidate>
+  <h2 id="tCli"></h2><input type="hidden" id="cId">
+  <div><label for="cNome">Nome</label><input id="cNome" maxlength="80" autocomplete="off"></div>
+  <div><label for="cEmail">E-mail</label><input id="cEmail" type="email" maxlength="120" autocomplete="off"></div>
+  <p class="err" id="eCli" role="alert" hidden></p>
+  <div class="acts"><button type="button" class="btn ghost" data-action="close-dlg">Cancelar</button><button class="btn red" id="sCli">Salvar cliente</button></div>
+</form></dialog>
+
+<dialog id="dPed"><form id="fPed" novalidate>
+  <h2 id="tPed"></h2><input type="hidden" id="pId">
+  <div><label for="pDesc">Itens do pedido</label><textarea id="pDesc"></textarea></div>
+  <div><label for="pVal">Valor (R$)</label><input id="pVal" inputmode="decimal" autocomplete="off"></div>
+  <p class="err" id="ePed" role="alert" hidden></p>
+  <div class="acts"><button type="button" class="btn ghost" data-action="close-dlg">Cancelar</button><button class="btn red" id="sPed">Salvar pedido</button></div>
+</form></dialog>
+
+<dialog id="dOk"><form method="dialog">
+  <h2 id="okT"></h2><p id="okX" style="margin:0"></p>
+  <div class="acts"><button class="btn ghost" value="no">Cancelar</button><button class="btn red" value="ok" id="okB"></button></div>
+</form></dialog>
+
+<script>
+(() => {
+'use strict';
+const API = location.protocol === 'file:' ? 'http://localhost:3000' : '';
+const MAXQ = 20;
+const MENU = [
+ {id:'cheese',cat:'Lanches',nome:'Cheeseburger Clássico',desc:'Hambúrguer, queijo, picles e molho da casa',preco:1290,e:'🍔'},
+ {id:'bacon',cat:'Lanches',nome:'Duplo Bacon',desc:'Dois hambúrgueres, bacon crocante e cheddar',preco:2490,e:'🥓'},
+ {id:'frango',cat:'Lanches',nome:'Frango Crocante',desc:'Filé empanado, alface e maionese',preco:2190,e:'🍗'},
+ {id:'veggie',cat:'Lanches',nome:'Veggie Burger',desc:'Hambúrguer de grão-de-bico e rúcula',preco:2290,e:'🥬'},
+ {id:'cb1',cat:'Combos',nome:'Combo Clássico',desc:'Cheeseburger, batata média e refrigerante',preco:2790,e:'🍔'},
+ {id:'cb2',cat:'Combos',nome:'Combo Duplo Bacon',desc:'Duplo Bacon, batata média e refrigerante',preco:3790,e:'🥓'},
+ {id:'cb3',cat:'Combos',nome:'Combo Frango',desc:'Frango Crocante, batata média e refrigerante',preco:3490,e:'🍗'},
+ {id:'bp',cat:'Acompanhamentos',nome:'Batata Pequena',desc:'Crocante e sequinha',preco:990,e:'🍟'},
+ {id:'bm',cat:'Acompanhamentos',nome:'Batata Média',desc:'Crocante e sequinha',preco:1390,e:'🍟'},
+ {id:'bg',cat:'Acompanhamentos',nome:'Batata Grande',desc:'Para dividir',preco:1790,e:'🍟'},
+ {id:'nug',cat:'Acompanhamentos',nome:'Nuggets 10 un.',desc:'Com molho barbecue',preco:2090,e:'🍗'},
+ {id:'cebola',cat:'Acompanhamentos',nome:'Anéis de Cebola',desc:'Empanados e dourados',preco:1590,e:'🧅'},
+ {id:'refri',cat:'Bebidas',nome:'Refrigerante 500 ml',desc:'Cola, guaraná ou limão',preco:790,e:'🥤'},
+ {id:'suco',cat:'Bebidas',nome:'Suco de Laranja',desc:'Natural, 400 ml',preco:990,e:'🍊'},
+ {id:'agua',cat:'Bebidas',nome:'Água 500 ml',desc:'Sem gás',preco:590,e:'💧'},
+ {id:'shake',cat:'Bebidas',nome:'Milk-shake Chocolate',desc:'Cremoso, 400 ml',preco:1690,e:'🥛'},
+ {id:'sundae',cat:'Sobremesas',nome:'Sundae Caramelo',desc:'Sorvete de creme com calda',preco:1190,e:'🍨'},
+ {id:'torta',cat:'Sobremesas',nome:'Torta de Maçã',desc:'Quentinha, com canela',preco:890,e:'🥧'},
+ {id:'casq',cat:'Sobremesas',nome:'Casquinha',desc:'Creme ou chocolate',preco:690,e:'🍦'}
+];
+const st = {clientes:[],pedidos:[],cart:{},cat:'Todos',cli:null,view:'menu',loaded:false,erro:null,busy:false,open:false};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const cents = c => fmt(c / 100);
+const norm = s => String(s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+class ApiError extends Error { constructor(m, s){ super(m); this.status = s; } }
+async function api(path, method = 'GET', body) {
+  let res;
+  try {
+    res = await fetch(API + path, body === undefined ? {method} : {method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  } catch (e) {
+    throw new ApiError('Sem conexão com a API. Confirme que o servidor está rodando (node src/server.js) e abra o site por http://localhost:3000.', 0);
+  }
+  if (res.status === 204) return null;
+  let data = null;
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) throw new ApiError((data && data.erro) || 'Erro ' + res.status, res.status);
+  return data;
+}
+function toast(msg, tipo) {
+  const el = document.createElement('div');
+  el.className = 'toast ' + (tipo || '');
+  el.textContent = msg;
+  $('#toasts').appendChild(el);
+  setTimeout(() => el.remove(), 4500);
+}
+function setErr(el, m) { el.textContent = m || ''; el.hidden = !m; }
+function setPill(on) {
+  const p = $('#pill');
+  p.className = 'pill ' + (on ? 'on' : 'off');
+  p.textContent = on ? 'API online' : 'API offline';
+}
+
+/* ---------- dados ---------- */
+async function loadAll() {
+  try {
+    const [c, p] = await Promise.all([api('/clientes'), api('/pedidos')]);
+    st.clientes = Array.isArray(c) ? c : [];
+    st.pedidos = Array.isArray(p) ? p : [];
+    st.erro = null; st.loaded = true; setPill(true);
+    if (st.cli && !st.clientes.some(x => x.id === st.cli)) st.cli = null;
+  } catch (e) {
+    st.erro = e.message; if (e.status === 0) setPill(false);
+  }
+  renderAll();
+}
+
+/* ---------- cardápio e carrinho ---------- */
+const lines = () => MENU.filter(i => st.cart[i.id] > 0).map(i => ({...i, q: st.cart[i.id]}));
+function ctrl(i) {
+  const q = st.cart[i.id] || 0;
+  if (!q) return `<button class="btn sm" data-action="add" data-id="${i.id}" aria-label="Adicionar ${esc(i.nome)}">Adicionar</button>`;
+  return stepper(i);
+}
+function stepper(i) {
+  return `<span class="step"><button data-action="dec" data-id="${i.id}" aria-label="Remover um ${esc(i.nome)}">−</button><b>${st.cart[i.id]}</b><button data-action="inc" data-id="${i.id}" aria-label="Adicionar mais um ${esc(i.nome)}">+</button></span>`;
+}
+function renderMenu() {
+  const cats = ['Todos', ...new Set(MENU.map(i => i.cat))];
+  $('#chips').innerHTML = cats.map(c => `<button class="chip" data-action="cat" data-cat="${esc(c)}" aria-pressed="${c === st.cat}">${esc(c)}</button>`).join('');
+  $('#grid').innerHTML = MENU.filter(i => st.cat === 'Todos' || i.cat === st.cat).map(i =>
+    `<article class="item"><div class="art" aria-hidden="true">${i.e}</div><h3>${esc(i.nome)}</h3><p>${esc(i.desc)}</p><div class="foot"><span class="price">${cents(i.preco)}</span>${ctrl(i)}</div></article>`).join('');
+}
+function renderCart() {
+  const L = lines(), total = L.reduce((s, l) => s + l.preco * l.q, 0), n = L.reduce((s, l) => s + l.q, 0);
+  const sorted = [...st.clientes].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  const opts = `<option value="">${sorted.length ? 'Selecione o cliente' : 'Nenhum cliente cadastrado'}</option>` +
+    sorted.map(c => `<option value="${c.id}"${c.id === st.cli ? ' selected' : ''}>${esc(c.nome)}</option>`).join('');
+  $('#cart').innerHTML =
+    `<div class="head"><h2>Seu pedido</h2><button class="xbtn" data-action="close-cart" aria-label="Fechar">✕</button></div>
+     <label for="cCli">Cliente</label>
+     <div class="row"><select id="cCli">${opts}</select><button class="btn sm ghost" data-action="new-client">Novo</button></div>
+     ${L.length ? L.map(l => `<div class="line"><div>${esc(l.nome)}<small>${cents(l.preco * l.q)}</small></div>${stepper(l)}</div>`).join('') : '<p class="empty">Seu pedido está vazio. Escolha itens no cardápio.</p>'}
+     <div class="total"><span>Total</span><span>${cents(total)}</span></div>
+     <div class="acts"><button class="btn ghost" data-action="clear" ${L.length ? '' : 'disabled'}>Limpar</button>
+     <button class="btn red" data-action="checkout" ${L.length && !st.busy ? '' : 'disabled'}>${st.busy ? 'Enviando...' : 'Finalizar pedido'}</button></div>`;
+  $('#cart').classList.toggle('open', st.open);
+  $('#scrim').classList.toggle('show', st.open);
+  const bar = $('#cartbar');
+  bar.hidden = !(st.view === 'menu' && n > 0);
+  bar.innerHTML = `<span>Ver pedido (${n})</span><span>${cents(total)}</span>`;
+}
+
+/* ---------- pedidos ---------- */
+function stateMsg(retry) {
+  if (st.erro) return `<div class="empty">${esc(st.erro)}<br><br><button class="btn" data-action="retry">Tentar de novo</button></div>`;
+  return st.loaded ? '' : '<div class="empty">Carregando...</div>';
+}
+function renderOrders() {
+  const box = $('#olist'), m = stateMsg();
+  if (m) { box.innerHTML = m; $('#osum').textContent = ''; return; }
+  const q = norm($('#osearch').value).replace(/^#/, '').trim();
+  const list = [...st.pedidos].sort((a, b) => b.id - a.id).filter(p =>
+    !q || String(p.id) === q || norm(`${p.cliente ? p.cliente.nome + ' ' + p.cliente.email : ''} ${p.descricao}`).includes(q));
+  $('#osum').textContent = `${list.length} ${list.length === 1 ? 'pedido' : 'pedidos'}, total ${fmt(list.reduce((s, p) => s + p.valor, 0))}`;
+  if (!list.length) {
+    box.innerHTML = st.pedidos.length ? '<div class="empty">Nenhum pedido encontrado para essa busca.</div>'
+      : '<div class="empty">Nenhum pedido ainda.<br><br><button class="btn" data-action="view" data-view="menu">Montar o primeiro pedido</button></div>';
+    return;
+  }
+  box.innerHTML = `<div class="wrap"><table><thead><tr><th>Nº</th><th>Cliente</th><th>Itens</th><th>Valor</th><th>Ações</th></tr></thead><tbody>` +
+    list.map(p => `<tr><td class="num">#${p.id}</td><td>${p.cliente ? esc(p.cliente.nome) + '<br><small>' + esc(p.cliente.email) + '</small>' : '-'}</td>
+      <td>${String(p.descricao).split('; ').map(esc).join('<br>')}</td><td class="num">${fmt(p.valor)}</td>
+      <td class="act"><button class="btn sm ghost" data-action="edit-order" data-id="${p.id}">Editar</button><button class="btn sm ghost" data-action="del-order" data-id="${p.id}">Excluir</button></td></tr>`).join('') +
+    '</tbody></table></div>';
+}
+
+/* ---------- clientes ---------- */
+function renderClients() {
+  const box = $('#clist'), m = stateMsg();
+  if (m) { box.innerHTML = m; return; }
+  if (!st.clientes.length) { box.innerHTML = '<div class="empty">Nenhum cliente cadastrado. Use "Novo cliente" para começar.</div>'; return; }
+  const list = [...st.clientes].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  box.innerHTML = `<div class="wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Pedidos</th><th>Total gasto</th><th>Ações</th></tr></thead><tbody>` +
+    list.map(c => { const ps = c.pedidos || [];
+      return `<tr><td>${esc(c.nome)}</td><td>${esc(c.email)}</td><td>${ps.length}</td><td class="num">${fmt(ps.reduce((s, p) => s + p.valor, 0))}</td>
+      <td class="act"><button class="btn sm ghost" data-action="edit-client" data-id="${c.id}">Editar</button><button class="btn sm ghost" data-action="del-client" data-id="${c.id}">Excluir</button></td></tr>`; }).join('') +
+    '</tbody></table></div>';
+}
+function renderAll() { renderMenu(); renderCart(); renderOrders(); renderClients(); }
+
+/* ---------- navegação ---------- */
+function setView(v) {
+  st.view = v; st.open = false;
+  for (const k of ['menu', 'orders', 'clients']) $('#v-' + k).hidden = k !== v;
+  document.querySelectorAll('nav [role=tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.view === v)));
+  renderCart();
+  if (v !== 'menu') loadAll();
+}
+
+/* ---------- diálogos ---------- */
+function confirmar(titulo, texto, botao) {
+  return new Promise(res => {
+    const d = $('#dOk');
+    $('#okT').textContent = titulo; $('#okX').textContent = texto; $('#okB').textContent = botao;
+    d.returnValue = '';
+    d.addEventListener('close', () => res(d.returnValue === 'ok'), {once: true});
+    d.showModal();
+  });
+}
+function openCli(c) {
+  $('#tCli').textContent = c ? 'Editar cliente' : 'Novo cliente';
+  $('#cId').value = c ? c.id : ''; $('#cNome').value = c ? c.nome : ''; $('#cEmail').value = c ? c.email : '';
+  setErr($('#eCli'), ''); $('#dCli').showModal(); $('#cNome').focus();
+}
+function openPed(p) {
+  $('#tPed').textContent = 'Editar pedido #' + p.id;
+  $('#pId').value = p.id; $('#pDesc').value = p.descricao; $('#pVal').value = String(p.valor).replace('.', ',');
+  setErr($('#ePed'), ''); $('#dPed').showModal(); $('#pDesc').focus();
+}
+$('#fCli').addEventListener('submit', async e => {
+  e.preventDefault();
+  const id = $('#cId').value, nome = $('#cNome').value.trim(), email = $('#cEmail').value.trim().toLowerCase(), eb = $('#eCli');
+  if (nome.length < 2) return setErr(eb, 'Informe o nome do cliente.');
+  if (!EMAIL.test(email)) return setErr(eb, 'Informe um e-mail válido, como nome@exemplo.com.');
+  setErr(eb, ''); $('#sCli').disabled = true;
+  try {
+    const salvo = id ? await api('/clientes/' + id, 'PUT', {nome, email}) : await api('/clientes', 'POST', {nome, email});
+    if (!id && salvo) st.cli = salvo.id;
+    $('#dCli').close();
+    toast(id ? 'Cliente atualizado.' : 'Cliente cadastrado.');
+    await loadAll();
+  } catch (err) { setErr(eb, err.message); }
+  $('#sCli').disabled = false;
+});
+$('#fPed').addEventListener('submit', async e => {
+  e.preventDefault();
+  const id = $('#pId').value, desc = $('#pDesc').value.trim(), raw = $('#pVal').value.trim(), eb = $('#ePed');
+  if (desc.length < 5) return setErr(eb, 'Descreva os itens com pelo menos 5 caracteres.');
+  if (!/^\d+([.,]\d{1,2})?$/.test(raw) || Number(raw.replace(',', '.')) <= 0) return setErr(eb, 'Informe um valor maior que zero, como 25,90.');
+  setErr(eb, ''); $('#sPed').disabled = true;
+  try {
+    await api('/pedidos/' + id, 'PUT', {descricao: desc, valor: Number(raw.replace(',', '.'))});
+    $('#dPed').close(); toast('Pedido #' + id + ' atualizado.'); await loadAll();
+  } catch (err) { setErr(eb, err.message); }
+  $('#sPed').disabled = false;
+});
+document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+
+/* ---------- ações ---------- */
+async function checkout() {
+  const L = lines();
+  if (st.busy || !L.length) return;
+  if (!st.cli) { toast('Selecione ou cadastre um cliente antes de finalizar.', 'erro'); const s = $('#cCli'); if (s) s.focus(); return; }
+  const total = L.reduce((s, l) => s + l.preco * l.q, 0);
+  const descricao = L.map(l => `${l.q}x ${l.nome}`).join('; ');
+  st.busy = true; renderCart();
+  try {
+    const p = await api('/pedidos', 'POST', {descricao, valor: total / 100, clienteId: st.cli});
+    st.cart = {}; st.open = false;
+    toast(`Pedido #${p.id} enviado! Total ${cents(total)}.`);
+  } catch (err) { toast(err.message, 'erro'); }
+  st.busy = false;
+  await loadAll();
+}
+async function run(fn) { try { await fn(); } catch (err) { toast(err.message || 'Algo deu errado.', 'erro'); } }
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-action]');
+  if (!t) return;
+  const a = t.dataset.action, id = t.dataset.id;
+  if (a === 'view') return setView(t.dataset.view);
+  if (a === 'close-dlg') return t.closest('dialog').close();
+  if (a === 'cat') { st.cat = t.dataset.cat; return renderMenu(); }
+  if (a === 'add' || a === 'inc' || a === 'dec') {
+    const scope = t.closest('#cart') ? '#cart' : '#grid';
+    const q = st.cart[id] || 0, nq = a === 'dec' ? q - 1 : Math.min(q + 1, MAXQ);
+    if (nq > 0) st.cart[id] = nq; else delete st.cart[id];
+    renderMenu(); renderCart();
+    const f = document.querySelector(`${scope} [data-action="${a === 'add' ? 'inc' : a}"][data-id="${id}"]`) || document.querySelector(`${scope} [data-action="add"][data-id="${id}"]`);
+    if (f) f.focus();
+    return;
+  }
+  if (a === 'clear') { st.cart = {}; renderMenu(); return renderCart(); }
+  if (a === 'open-cart') { st.open = true; return renderCart(); }
+  if (a === 'close-cart') { st.open = false; return renderCart(); }
+  if (a === 'checkout') return run(checkout);
+  if (a === 'retry') return run(loadAll);
+  if (a === 'new-client') return openCli(null);
+  if (a === 'edit-client') { const c = st.clientes.find(x => x.id === Number(id)); return c && openCli(c); }
+  if (a === 'edit-order') { const p = st.pedidos.find(x => x.id === Number(id)); return p && openPed(p); }
+  if (a === 'del-order') return run(async () => {
+    if (!await confirmar(`Excluir pedido #${id}?`, 'Esta ação não pode ser desfeita.', 'Excluir pedido')) return;
+    try { await api('/pedidos/' + id, 'DELETE'); toast(`Pedido #${id} excluído.`); } catch (err) { toast(err.message, 'erro'); }
+    await loadAll();
+  });
+  if (a === 'del-client') return run(async () => {
+    const c = st.clientes.find(x => x.id === Number(id)); if (!c) return;
+    const ps = c.pedidos || [];
+    const aviso = ps.length ? `${c.nome} tem ${ps.length === 1 ? '1 pedido registrado' : ps.length + ' pedidos registrados'}. Eles também serão excluídos.` : `${c.nome} será removido.`;
+    if (!await confirmar('Excluir cliente?', aviso + ' Esta ação não pode ser desfeita.', 'Excluir cliente')) return;
+    try {
+      for (const p of ps) { try { await api('/pedidos/' + p.id, 'DELETE'); } catch (err) { if (err.status !== 404) throw err; } }
+      await api('/clientes/' + c.id, 'DELETE'); toast('Cliente excluído.');
+    } catch (err) { toast(err.message, 'erro'); }
+    await loadAll();
+  });
+});
+document.addEventListener('change', e => { if (e.target.id === 'cCli') st.cli = e.target.value ? Number(e.target.value) : null; });
+$('#osearch').addEventListener('input', renderOrders);
+
+renderAll();
+loadAll();
+})();
+</script>
+</body>
+</html>

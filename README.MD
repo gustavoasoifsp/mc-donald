@@ -40,10 +40,14 @@ Um simple sistema de lanchonete inspirado na grande franquia de fast-food Wendy'
 `git clone https://github.com/gustavoasoifsp/mc-donald.git`
 2. Instale as dependências:
 `npm install`
-3. Crie as tabelas do banco de dados:
+3. Crie o ".env" na raíz do projeto e cole o seguinte texto:
+`DATABASE_URL="file:./dev.db`
+4. Crie as tabelas do banco de dados:
 `npx prisma migrate dev`
-4. Inicie o servidor:
+5. Inicie o servidor:
 `node src/server.js`
+6. Abra o site pelo endereço:
+`http://localhost:3000/`
 
 ## Rotas Principais da API
 

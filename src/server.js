@@ -16,6 +16,10 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware global de auditoria
 app.use(logger);
 
+// Front-end
+const path = require('path');
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
 // Rotas
 app.use(clienteRoutes);
 app.use(pedidoRoutes);
